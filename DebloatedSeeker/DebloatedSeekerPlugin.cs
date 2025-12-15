@@ -69,7 +69,7 @@ namespace DebloatedSeeker
                         local = local.Replace("350", "500");
                         break;
                     case "SEEKER_SECONDARY_DESCRIPTION":
-                        local = Regex.Replace(local.Replace("600", "1400"), "3.*5", "5", RegexOptions.None);
+                        local = Regex.Replace(local.Replace("600", "1200"), "3.*5", "5", RegexOptions.None);
                         break;
                     case "SEEKER_SPECIAL_ALT1_DESCRIPTION":
                         local = local.Replace("400", "1000").Replace("700", "2000");
@@ -223,7 +223,7 @@ namespace DebloatedSeeker
         private void DebloatUnseenHand()
         {
             //Modify Stats
-            PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.UnseenHand.asset", "fistDamageCoefficient", "14");
+            PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.UnseenHand.asset", "fistDamageCoefficient", "12");
 
             //Modify Projectile
             GameObject handProjectile = Addressables.LoadAssetAsync<GameObject>("RoR2/DLC2/Seeker/UnseenHandMovingProjectile.prefab").WaitForCompletion().InstantiateClone("DebloatedSeekerUnseenHandMovingProjectile", true);
