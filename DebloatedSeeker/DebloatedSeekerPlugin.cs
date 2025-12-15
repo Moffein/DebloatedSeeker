@@ -85,8 +85,8 @@ namespace DebloatedSeeker
         {
             CharacterBody body = seekerObject.GetComponent<CharacterBody>();
             body.armor = 0f;
-            body.baseMaxHealth = 100f;
-            body.levelMaxHealth = 30f;
+            body.baseMaxHealth = 90f;
+            body.levelMaxHealth = 27f;
             body.baseRegen = 1f;
             body.levelRegen = 0.2f;
         }
@@ -251,7 +251,7 @@ namespace DebloatedSeeker
         private void SojournVehicle_UpdateBlastRadius(MonoMod.Cil.ILContext il)
         {
             ILCursor c = new ILCursor(il);
-            if (c.TryGotoNext(MoveType.After, x => x.MatchCallvirt<CharacterBody>("getBuffCount")))
+            if (c.TryGotoNext(MoveType.After, x => x.MatchCallvirt<CharacterBody>("GetBuffCount")))
             {
                 c.EmitDelegate<Func<int, int>>(orig => 5);
             }
@@ -343,7 +343,7 @@ namespace DebloatedSeeker
 
             if (c.TryGotoNext(MoveType.After, x => x.MatchLdcR4(0.04f)))
             {
-                c.EmitDelegate<Func<float, float>>(x => 0.3f);
+                c.EmitDelegate<Func<float, float>>(x => 0.25f);
             }
             else
             {
@@ -365,23 +365,66 @@ namespace DebloatedSeeker
         }
         private void SeekerController_CmdTriggerHealPulse(On.RoR2.SeekerController.orig_CmdTriggerHealPulse orig, SeekerController self, float value, Vector3 corePosition, float blastRadius, float fxScale)
         {
-            orig(self, value, corePosition, blastRadius, fxScale);
+            //orig(self, value, corePosition, blastRadius, fxScale);
 
             if (!NetworkServer.active) return;
+
+            TeamIndex friendlyTeam = (self.characterBody && self.characterBody.teamComponent) ? self.characterBody.teamComponent.teamIndex : TeamIndex.None;
+            List<HurtBox> hurtBoxesList = new List<HurtBox>();
+            List<HealthComponent> healedTargets = new List<HealthComponent>();
+
+            //Overwrite vanilla heal pulse logic
+            SphereSearch sphereSearch = new SphereSearch();
+            sphereSearch.mask = LayerIndex.entityPrecise.mask;
+            sphereSearch.origin = corePosition;
+            sphereSearch.queryTriggerInteraction = QueryTriggerInteraction.Collide;
+            sphereSearch.radius = blastRadius;
+            TeamMask teamMask = default(TeamMask);
+            teamMask.AddTeam(friendlyTeam);
+            sphereSearch.RefreshCandidates();
+            sphereSearch.FilterCandidatesByDistinctHurtBoxEntities();
+            sphereSearch.RefreshCandidates().FilterCandidatesByHurtBoxTeam(teamMask).FilterCandidatesByDistinctHurtBoxEntities().GetHurtBoxes(hurtBoxesList);
+            int i = 0;
+            int count = hurtBoxesList.Count;
+            while (i < count)
+            {
+                HealthComponent healthComponent = hurtBoxesList[i].healthComponent;
+                if (!healedTargets.Contains(healthComponent))
+                {
+                    healedTargets.Add(healthComponent);
+
+                    if (self.characterBody && self.characterBody.healthComponent == healthComponent)
+                    {
+                        healthComponent.Heal(value, default);
+                    }
+                    else
+                    {
+                        healthComponent.Heal(value * 2f, default);
+                    }
+                }
+                i++;
+            }
+            EffectManager.SpawnEffect(self.healingExplosionPrefab, new EffectData
+            {
+                origin = corePosition,
+                rotation = Quaternion.identity,
+                scale = fxScale
+            }, true);
+
+            //Cleanse Projectiles
             List<ProjectileController> instancesList = InstanceTracker.GetInstancesList<ProjectileController>();
             List<GameObject> toDestroy = new List<GameObject>();
             foreach (ProjectileController pc in instancesList)
             {
-                TeamIndex friendlyTeam = self.characterBody.teamComponent ? self.characterBody.teamComponent.teamIndex : TeamIndex.None;
                 if (pc.cannotBeDeleted || pc.teamFilter.teamIndex == friendlyTeam || (pc.transform.position - self.transform.position).sqrMagnitude >= blastRadius * blastRadius) continue;
                 toDestroy.Add(pc.gameObject);
             }
 
             GameObject[] toDestroy2 = toDestroy.ToArray();
-            for (int i = 0; i < toDestroy2.Length; i++)
+            for (int j = 0; j < toDestroy2.Length; j++)
             {
-                EffectManager.SimpleEffect(cleanseEffect, toDestroy2[i].transform.position, toDestroy2[i].transform.rotation, true);
-                UnityEngine.Object.Destroy(toDestroy2[i]);
+                EffectManager.SimpleEffect(cleanseEffect, toDestroy2[j].transform.position, toDestroy2[j].transform.rotation, true);
+                UnityEngine.Object.Destroy(toDestroy2[j]);
             }
         }
         private static GameObject cleanseEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/DLC2/Seeker/SpiritPunchMuzzleFlashVFX.prefab").WaitForCompletion();
@@ -425,7 +468,7 @@ namespace DebloatedSeeker
             GameObject projectilePrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/DLC2/Seeker/SeekerCyclonePrefab.prefab").WaitForCompletion().InstantiateClone("DebloatedSeekerCycloneProjectile", true);
             PluginContentPack.projectilePrefabs.Add(projectilePrefab);
             SeekerCycloneController scc = projectilePrefab.GetComponent<SeekerCycloneController>();
-            scc.baseLifetime = 6f;
+            scc.baseLifetime = 7f;
             scc.durationBonusPerStack = 0f;
 
             GameObject reprieveVehicle = Addressables.LoadAssetAsync<GameObject>("RoR2/DLC2/Seeker/SojournVehicle/ReprieveVehicle.prefab").WaitForCompletion(); //wont even bother cloning this
@@ -450,7 +493,8 @@ namespace DebloatedSeeker
                 pbc.damageCoefficient = 10f;
                 pbc.bonusDamageCoefficientPerStack = 0f;
                 pbc.bonusAllyHealingPercentPerStack = 0f;
-                pbc.allyHealingPercent = 0.15f;
+                pbc.allyHealingPercent = 0.25f;
+                pbc.barrierPercent = 0.15f;
             }
 
 
@@ -463,7 +507,8 @@ namespace DebloatedSeeker
                 pbc.damageCoefficient = 20f;
                 pbc.bonusDamageCoefficientPerStack = 0f;
                 pbc.bonusAllyHealingPercentPerStack = 0f;
-                pbc.allyHealingPercent = 0.3f;
+                pbc.allyHealingPercent = 0.5f;
+                pbc.barrierPercent = 0.3f;
             }
 
             PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.PalmBlastFire.asset", "projectilePrefab", projectilePrefab);

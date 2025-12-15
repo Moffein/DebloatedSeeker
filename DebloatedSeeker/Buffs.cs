@@ -41,7 +41,7 @@ namespace DebloatedSeeker
             On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += CharacterBody_AddTimedBuff_BuffDef_float;
 
             //A bit unfitting but whatever
-            /*IL.RoR2.CharacterBody.OnClientBuffsChanged += (il) =>
+            IL.RoR2.CharacterBody.OnClientBuffsChanged += (il) =>
             {
                 ILCursor c = new ILCursor(il);
                 if (c.TryGotoNext(
@@ -57,12 +57,13 @@ namespace DebloatedSeeker
                 }
                 else
                 {
-                    UnityEngine.Debug.LogError("DebloatedSeeker: OnClientBuffsChanged IL Hook failed");
+                    UnityEngine.Debug.LogError("DebloatedSeeker: OnClientBuffsChanged IL hook failed.");
                 }
-            };*/
+            };
 
             //Maybe this looks more aurelionite-like?
-            IL.RoR2.CharacterBody.UpdateAllTemporaryVisualEffects += (il) =>
+            //Looks good, but overaly expiration is bugged in vanilla
+            /*IL.RoR2.CharacterModel.UpdateOverlays += (il) =>
             {
                 ILCursor c = new ILCursor(il);
                 if (c.TryGotoNext(
@@ -78,9 +79,9 @@ namespace DebloatedSeeker
                 }
                 else
                 {
-                    Debug.LogError("DebloatedSeeker: Failed to set up Tranquility2 Overlay.");
+                    Debug.LogError("DebloatedSeeker: Failed to set up Tranquility2 Overlay, IL hook failed.");
                 }
-            };
+            };*/
         }
 
         private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration)
