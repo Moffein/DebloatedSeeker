@@ -28,7 +28,7 @@ namespace DebloatedSeeker
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [BepInDependency(R2API.RecalculateStatsAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.0")]
+    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.1")]
     public class DebloatedSeekerPlugin : BaseUnityPlugin
     {
         internal void Awake()
@@ -141,7 +141,7 @@ namespace DebloatedSeeker
                     sphereSearch.mask = LayerIndex.entityPrecise.mask;
                     sphereSearch.origin = self.gameObject.transform.position;
                     sphereSearch.queryTriggerInteraction = QueryTriggerInteraction.Collide;
-                    sphereSearch.radius = 25f;  //HARDCODED VALUE
+                    sphereSearch.radius = 30f;  //HARDCODED VALUE
 
                     bool hasScepter = false;
                     TeamMask teamMask = default(TeamMask);
@@ -284,7 +284,7 @@ namespace DebloatedSeeker
             PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "percentPerGate", "0");
             PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "blastProcCoefficient", "1"); //WHY IS THIS 0.8
             PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "blastRadiusScaling", "0");   //WHY DOES THIS MULTIPLY RADIUS BY 7X IN VANILLA?????
-            PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "blastRadius", "25"); //WHY IS THIS 70 IN VANILLA
+            PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "blastRadius", "30"); //WHY IS THIS 70 IN VANILLA
 
             //WHY IS THE BASE HEALING ACTUALLY A HARDCODED VALUE????
             //PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.Meditate.asset", "healingExplosionAmount", "0.32"); //0.32 vanilla at max chakra
