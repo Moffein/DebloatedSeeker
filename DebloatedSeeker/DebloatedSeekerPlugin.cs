@@ -28,7 +28,7 @@ namespace DebloatedSeeker
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [BepInDependency(R2API.RecalculateStatsAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.1")]
+    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.2")]
     public class DebloatedSeekerPlugin : BaseUnityPlugin
     {
         internal void Awake()
@@ -216,8 +216,10 @@ namespace DebloatedSeeker
             PluginUtils.SetAddressableEntityStateField("RoR2/DLC2/Seeker/EntityStates.Seeker.SpiritPunch.asset", "dmgBuffIncrease", "0");
 
             //Remove Keyword Jonk
-            SkillDef skillDef = Addressables.LoadAssetAsync<SkillDef>("RoR2/DLC2/Seeker/SeekerBodySpiritPunchCrosshair.asset").WaitForCompletion();
+            SeekerWeaponSkillDef skillDef = Addressables.LoadAssetAsync<SeekerWeaponSkillDef>("RoR2/DLC2/Seeker/SeekerBodySpiritPunchCrosshair.asset").WaitForCompletion();
             PluginUtils.RemoveTranquilityKeyword(skillDef);
+            skillDef.stepGraceDuration = 0.5f;
+            
         }
 
         private void DebloatUnseenHand()
