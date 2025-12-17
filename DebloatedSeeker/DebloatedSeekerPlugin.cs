@@ -28,7 +28,7 @@ namespace DebloatedSeeker
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [BepInDependency(R2API.RecalculateStatsAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.2")]
+    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.3")]
     public class DebloatedSeekerPlugin : BaseUnityPlugin
     {
         internal void Awake()
@@ -84,9 +84,9 @@ namespace DebloatedSeeker
         private void NerfBaseStats(GameObject seekerObject)
         {
             CharacterBody body = seekerObject.GetComponent<CharacterBody>();
-            body.armor = 0f;
-            body.baseMaxHealth = 90f;
-            body.levelMaxHealth = 27f;
+            body.baseArmor = 0f;
+            body.baseMaxHealth = 100f;
+            body.levelMaxHealth = 30f;
             body.baseRegen = 1f;
             body.levelRegen = 0.2f;
         }
