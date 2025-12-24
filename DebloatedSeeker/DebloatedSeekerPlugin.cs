@@ -28,7 +28,7 @@ namespace DebloatedSeeker
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [BepInDependency(R2API.RecalculateStatsAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.3")]
+    [BepInPlugin("com.Moffein.DebloatedSeeker", "DebloatedSeeker", "1.0.4")]
     public class DebloatedSeekerPlugin : BaseUnityPlugin
     {
         internal void Awake()
@@ -307,7 +307,7 @@ namespace DebloatedSeeker
                 meditateScepter.skillNameToken = "ANCIENTSCEPTER_SEEKER_MEDITATENAME";  //Steal this from ScepterMod
                 meditateScepter.skillDescriptionToken = LanguageTokens.MeditateScepterToken;
                 meditateScepter.icon = null;    //Gets set in RegisterScepterSkill, using ScepterMod's icon
-
+                meditateScepter.baseRechargeInterval = skillDef.baseRechargeInterval;
                 meditateScepter.beginSkillCooldownOnSkillEnd = skillDef.beginSkillCooldownOnSkillEnd;
                 meditateScepter.baseMaxStock = skillDef.baseMaxStock;
                 meditateScepter.activationState = skillDef.activationState; //Same state, just check for scepter
@@ -535,7 +535,7 @@ namespace DebloatedSeeker
                 scepter.skillNameToken = "ANCIENTSCEPTER_SEEKER_PALMBLASTNAME";  //Steal this from ScepterMod
                 scepter.skillDescriptionToken = LanguageTokens.PalmBlastScepterToken;
                 scepter.icon = null;    //Gets set in RegisterScepterSkill, using ScepterMod's icon
-
+                scepter.baseRechargeInterval = skillDef.baseRechargeInterval;
                 scepter.beginSkillCooldownOnSkillEnd = skillDef.beginSkillCooldownOnSkillEnd;
                 scepter.baseMaxStock = skillDef.baseMaxStock;
                 scepter.activationState = skillDef.activationState; //Same state, just check for scepter
